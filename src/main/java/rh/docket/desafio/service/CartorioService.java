@@ -53,15 +53,18 @@ public class CartorioService {
     public CartorioDTO create(NovoCartorioDTO newCartorioDTO) throws MappedException {
         this.validateCartorioDTO(newCartorioDTO);
         Cartorio newCartorio = CartorioMapper.INSTANCE.fromDto(newCartorioDTO); // Transforming DTO in Entity
+
         cartorioRepo.save(newCartorio);
         return CartorioMapper.INSTANCE.fromEntity(newCartorio);
     }
 
     private void validateCartorioDTO(NovoCartorioDTO newCartorioDTO) throws MappedException {
-        if (Strings.isNullOrEmpty(newCartorioDTO.getNome().trim()))
+        if (newCartorioDTO.getNome() == null || Strings.isNullOrEmpty(newCartorioDTO.getNome().trim()))
             throw new MappedException("Cadastro de cartório exige um nome válido.", HttpStatus.BAD_REQUEST);
-        if (Strings.isNullOrEmpty(newCartorioDTO.getEndereco().trim()))
+        if (newCartorioDTO.getEndereco() == null || Strings.isNullOrEmpty(newCartorioDTO.getEndereco().trim()))
             throw new MappedException("Cadastro de cartório exige um nome válido.", HttpStatus.BAD_REQUEST);
+        newCartorioDTO.setNome(newCartorioDTO.getNome().trim());
+        newCartorioDTO.setEndereco(newCartorioDTO.getEndereco().trim());
     }
 
     public CartorioDTO vincularCertidoesCartorio(long idCartorio, List<Long> certidoesIds)

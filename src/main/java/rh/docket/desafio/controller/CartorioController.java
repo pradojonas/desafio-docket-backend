@@ -32,7 +32,7 @@ public class CartorioController {
         return service.list();
     }
 
-    @ApiOperation(value = "Busca Cartório e suas certidões", response = CartorioDTO.class)
+    @ApiOperation(value = "Busca um cartório e suas certidões", response = CartorioDTO.class)
     @GetMapping("{idCartorio}")
     CartorioDTO getById(@PathVariable long idCartorio) throws MappedException {
         return service.getById(idCartorio);
@@ -53,7 +53,7 @@ public class CartorioController {
         return service.vincularCertidoesCartorio(idCartorio, certidoesIds);
     }
     
-    @ApiOperation(value = "Busca Cartório e suas certidões")
+    @ApiOperation(value = "Remove um cartório e suas certidões da base de dados")
     @DeleteMapping("{idCartorio}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteById(@PathVariable long idCartorio) throws MappedException {
