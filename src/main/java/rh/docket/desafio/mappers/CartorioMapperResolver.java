@@ -22,7 +22,7 @@ public class CartorioMapperResolver {
             var result = cartorioRepository.findById(dto.getId());
             return result.orElse(null);
         }
-        return null;
+        return new Cartorio();
     }
 
 }
