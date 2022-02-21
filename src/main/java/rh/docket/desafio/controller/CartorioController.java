@@ -49,10 +49,10 @@ public class CartorioController {
     @PostMapping("{idCartorio}/certidoes")
     @ResponseStatus(HttpStatus.CREATED)
     CartorioDTO add(@PathVariable long idCartorio, @RequestBody List<Long> certidoesIds)
-                                                                                             throws MappedException {
+                                                                                         throws MappedException {
         return service.vincularCertidoesCartorio(idCartorio, certidoesIds);
     }
-    
+
     @ApiOperation(value = "Remove um cartório e suas certidões da base de dados")
     @DeleteMapping("{idCartorio}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
