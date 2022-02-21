@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,13 @@ public class CartorioController {
     CartorioDTO add(@PathVariable long idCartorio, @RequestBody List<Long> certidoesIds)
                                                                                              throws MappedException {
         return service.vincularCertidoesCartorio(idCartorio, certidoesIds);
+    }
+    
+    @ApiOperation(value = "Busca Cartório e suas certidões")
+    @DeleteMapping("{idCartorio}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteById(@PathVariable long idCartorio) throws MappedException {
+        service.delete(idCartorio);
     }
 
 }

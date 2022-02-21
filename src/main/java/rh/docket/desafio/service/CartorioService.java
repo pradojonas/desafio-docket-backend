@@ -99,10 +99,10 @@ public class CartorioService {
                                                              .map(c -> c.getId())
                                                              .collect(Collectors.toList());
 
-        List<Certidao> certidoesCartorioEmBanco   = certidaoService.getFromDatabaseByIds(idsCertidoesCartorio);
-        List<Long>     idCertidoesEmBanco = certidoesCartorioEmBanco.stream()
-                                                            .map(c -> c.getId())
-                                                            .collect(Collectors.toList());
+        List<Certidao> certidoesCartorioEmBanco = certidaoService.getFromDatabaseByIds(idsCertidoesCartorio);
+        List<Long>     idCertidoesEmBanco       = certidoesCartorioEmBanco.stream()
+                                                                          .map(c -> c.getId())
+                                                                          .collect(Collectors.toList());
 
         List<CertidaoDTO> certidoesParaCriacao = certidoesAssociadas.stream()
                                                                     .filter(cert -> !idCertidoesEmBanco.contains(cert.getId()))
@@ -120,6 +120,13 @@ public class CartorioService {
 
         var dto = CartorioMapper.INSTANCE.fromEntity(cartorioEditado);
         return dto;
+    }
+
+    public void delete(long idCartorio) throws MappedException {
+        var entity = cartorioRepo.findById(idCartorio)
+                                 .orElseThrow(() -> new MappedException("Cartório não encontrado para remoção.",
+                                                                        HttpStatus.NOT_FOUND));
+        cartorioRepo.delete(entity);
     }
 
 }
