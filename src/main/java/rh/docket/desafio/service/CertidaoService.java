@@ -41,6 +41,11 @@ public class CertidaoService {
         var modelList = certidaoApiService.consultaCertidoesUsingAPI();
         return modelList;
     }
+    
+    public CertidaoDTO getByIdFromApi(Long idConsultado) throws MappedException {
+        var modelList = certidaoApiService.findById(idConsultado);
+        return modelList;
+    }
 
     public CertidaoDTO getById(Long idCertidao) throws MappedException {
         var entity = certidaoRepo.findById(idCertidao)
