@@ -23,7 +23,7 @@ public class CertidaoService {
 
     @Autowired
     private CertidaoRepository certidaoRepo;
-    
+
     @Autowired
     private CertidaoApiService certidaoApiService;
 
@@ -36,12 +36,12 @@ public class CertidaoService {
                                  .collect(Collectors.toList());
         return dtoList;
     }
-    
+
     public List<CertidaoDTO> listFromApi() throws MappedException {
         var modelList = certidaoApiService.consultaCertidoesUsingAPI();
         return modelList;
     }
-    
+
     public CertidaoDTO getByIdFromApi(Long idConsultado) throws MappedException {
         var modelList = certidaoApiService.findById(idConsultado);
         return modelList;
@@ -55,11 +55,19 @@ public class CertidaoService {
         return dto;
     }
 
-    public CertidaoDTO add(CertidaoDTO newCertidaoDTO) throws MappedException {
+    public List<Certidao> getFromDatabaseByIds(List<Long> idsCertidoes) {
+        List<Certidao> entities = certidaoRepo.findByIdIn(idsCertidoes);
+        // var dtos = entities.stream()
+        // .map(e -> CertidaoMapper.INSTANCE.fromEntity(e))
+        // .collect(Collectors.toList());
+        return entities;
+    }
+
+    public Certidao add(CertidaoDTO newCertidaoDTO) throws MappedException {
         this.validateCertidaoDTO(newCertidaoDTO);
         Certidao newCertidao = CertidaoMapper.INSTANCE.fromDto(newCertidaoDTO); // Transforming DTO in Entity
         certidaoRepo.save(newCertidao);
-        return CertidaoMapper.INSTANCE.fromEntity(newCertidao);
+        return newCertidao;
     }
 
     private void validateCertidaoDTO(CertidaoDTO newCertidaoDTO) throws MappedException {
