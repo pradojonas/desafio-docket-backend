@@ -17,7 +17,7 @@ public class ViewController {
     @Autowired
     CartorioService service;
 
-    @GetMapping("/cartorios")
+    @GetMapping("/")
     public ModelAndView hello(Model model) {
         ModelAndView      mv   = new ModelAndView("cartorios");
         List<CartorioDTO> list = service.list();
