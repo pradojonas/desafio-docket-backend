@@ -22,6 +22,9 @@ public class ApplicationProperties {
 
     @Value("${api.certidoes}")
     private String certidoesApiUrl;
+    
+    @Value("${api.certidoes.timeout.seconds}")
+    private Long cpfApiTimeout;
 
     public List<String> getEnv() {
         return Arrays.asList(env.getActiveProfiles());
@@ -33,5 +36,13 @@ public class ApplicationProperties {
 
     public void setCertidoesApiUrl(String certidoesApiUrl) {
         this.certidoesApiUrl = certidoesApiUrl;
+    }
+    
+    public Long getCpfApiTimeout() {
+        return cpfApiTimeout;
+    }
+
+    public void setCpfApiTimeout(Long cpfApiTimeout) {
+        this.cpfApiTimeout = cpfApiTimeout;
     }
 }
