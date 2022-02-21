@@ -24,6 +24,8 @@ import rh.docket.desafio.exceptions.MappedException;
 @Service
 public class CertidaoApiService {
 
+    private static final String ERRO_SERVICO_INDISPONIVEL = String.format("O serviço de consulta de certidões ({url}) não está respondendo. Por favor, entre em contato com a equipe de desenvolvimento.");
+
     @Autowired
     private ApplicationProperties appProps;
 
@@ -53,12 +55,46 @@ public class CertidaoApiService {
             var cause = Exceptions.unwrap(e);
             if (cause instanceof WebClientRequestException
                 || cause instanceof TimeoutException)
-                throw new MappedException(String.format("O serviço de consulta de certidões (%s) não está respondendo. Por favor, entre em contato com a equipe de desenvolvimento.",
-                                                        url), HttpStatus.SERVICE_UNAVAILABLE);
+                throw new MappedException(ERRO_SERVICO_INDISPONIVEL.replace("{url}", url),
+                                          HttpStatus.SERVICE_UNAVAILABLE);
         }
         LOGGER.error("Erro ao consultar API de certidões");
-        throw new MappedException(String.format("Erro ao consultar API de certidões.", url),
-                                  HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new MappedException("Erro ao consultar API de certidões.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public CertidaoDTO findById(Long idConsultado) throws MappedException {
+        String url = appProps.getCertidoesApiUrl() + "/" + idConsultado;
+
+        try {
+            WebClient webClient = WebClient.builder()
+                                           .baseUrl(url)
+                                           .defaultHeader(HttpHeaders.CONTENT_TYPE,
+                                                          MediaType.APPLICATION_JSON_VALUE)
+                                           .build();
+
+            Mono<CertidaoDTO> response = webClient.get()
+                                                  .accept(MediaType.APPLICATION_JSON)
+                                                  .retrieve()
+                                                  .onStatus(obtainedCode -> obtainedCode.equals(HttpStatus.NOT_FOUND),
+                                                            request -> Mono.error(new MappedException(String.format("Não foi encontrada uma certidão (id = '%s') válida.",
+                                                                                                                    idConsultado),
+                                                                                                      HttpStatus.BAD_REQUEST)))
+                                                  .bodyToMono(CertidaoDTO.class)
+                                                  .timeout(Duration.ofSeconds(appProps.getCpfApiTimeout()));
+            CertidaoDTO       certidao = response.block();
+            LOGGER.info(String.format("Resultado da consulta de certidoes: {%s}", certidao.toString()));
+            return certidao;
+        } catch (RuntimeException e) {
+            // Thrown by 'block()'
+            var cause = Exceptions.unwrap(e);
+            if (cause instanceof WebClientRequestException
+                || cause instanceof TimeoutException)
+                throw new MappedException(ERRO_SERVICO_INDISPONIVEL.replace("{url}", url),
+                                          HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        LOGGER.error("Erro ao consultar API de certidões");
+        throw new MappedException("Erro ao consultar API de certidões.", HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
 }
